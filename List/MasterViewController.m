@@ -36,12 +36,13 @@
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     UIBarButtonItem *editButton = self.editButtonItem;
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemUndo target:self action:@selector(goPrevCategory:)];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goPrevCategory:)];
     
     NSArray *rightButtons = [[NSArray alloc] initWithObjects:addButton, editButton, nil];
     self.navigationItem.rightBarButtonItems = rightButtons;
     
     self.navigationItem.leftBarButtonItem = backButton;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -179,8 +180,8 @@
             }
             
         }
-    }
-    
+    }    
+        
     [self.tableView reloadData];
 }
 
