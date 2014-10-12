@@ -7,11 +7,13 @@
 //
 
 #import "MasterViewController.h"
-
-#import "DetailViewController.h"
+#import "CategoryModel.h"
 
 @interface MasterViewController () {
-    NSMutableArray *_objects;
+    NSMutableDictionary *categories;
+    NSMutableArray *curCategories;
+    int newCategoryId;
+    NSNumber *curCategoryId;
 }
 @end
 
@@ -30,11 +32,16 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
+    //self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
-    self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    UIBarButtonItem *editButton = self.editButtonItem;
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemUndo target:self action:@selector(goPrevCategory:)];
+    
+    NSArray *rightButtons = [[NSArray alloc] initWithObjects:addButton, editButton, nil];
+    self.navigationItem.rightBarButtonItems = rightButtons;
+    
+    self.navigationItem.leftBarButtonItem = backButton;
 }
 
 - (void)didReceiveMemoryWarning
@@ -45,12 +52,36 @@
 
 - (void)insertNewObject:(id)sender
 {
-    if (!_objects) {
-        _objects = [[NSMutableArray alloc] init];
+    if (!categories) {
+        categories = [[NSMutableDictionary alloc] init];
+        curCategories = [[NSMutableArray alloc] init];
     }
-    [_objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    if(!newCategoryId){
+        newCategoryId = 1;
+        curCategoryId = @0;
+    }
+    
+    UIAlertView * alert = [[UIAlertView alloc]
+                           initWithTitle:@"Добавить"
+                           message:@"Введите название категории."
+                           delegate:self
+                           cancelButtonTitle:@"OK"                           
+                           otherButtonTitles:nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    NSString *name = [[alertView textFieldAtIndex:0] text];
+    if( [CategoryModel validateName:name] ){
+        CategoryModel *tempCategory = [[CategoryModel alloc] initWithName:name itemId:[NSNumber numberWithInt:newCategoryId] parent:curCategoryId ];
+        [categories setObject:tempCategory forKey:[NSNumber numberWithInt:newCategoryId]];
+        [curCategories insertObject:tempCategory atIndex:0];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        newCategoryId++;
+    }    
 }
 
 #pragma mark - Table View
@@ -62,15 +93,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return curCategories.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-
-    NSDate *object = _objects[indexPath.row];
-    cell.textLabel.text = [object description];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];    
+    NSString *text = [ [curCategories objectAtIndex:indexPath.row] name];
+    cell.textLabel.text = text;
     return cell;
 }
 
@@ -83,10 +113,25 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [_objects removeObjectAtIndex:indexPath.row];
+        NSNumber *tempCatId = [[curCategories objectAtIndex:indexPath.row] itemId];
+        [curCategories removeObjectAtIndex:indexPath.row];
+        [self removeChildrenById:tempCatId];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+    }
+}
+
+- (void) removeChildrenById:(NSNumber*)id_ {
+    [categories removeObjectForKey:id_];
+    NSMutableArray *arrToRemove = [NSMutableArray new];
+    for(NSNumber *i in categories){
+        if([[[categories objectForKey:i] parentId] integerValue] == [id_ integerValue]){
+            [arrToRemove insertObject:i atIndex:0];            
+        }
+    }
+    for(int i=0; i<[arrToRemove count]; i++){
+        [self removeChildrenById:[arrToRemove objectAtIndex:i] ];
     }
 }
 
@@ -95,7 +140,8 @@
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
 }
-*/
+ */
+
 
 /*
 // Override to support conditional rearranging of the table view.
@@ -108,19 +154,37 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        NSDate *object = _objects[indexPath.row];
-        self.detailViewController.detailItem = object;
-    }
+    
+    curCategoryId = [[curCategories objectAtIndex:indexPath.row] itemId];
+    
+    [self updateTableView];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = _objects[indexPath.row];
-        [[segue destinationViewController] setDetailItem:object];
-    }
+
+- (void)goPrevCategory:(id)sender {
+    curCategoryId = [ [categories objectForKey:curCategoryId] parentId];
+    [self updateTableView];
 }
+
+-(void) updateTableView {
+    
+    [curCategories removeAllObjects];
+    
+    for(NSNumber *catId in categories){
+        if([[[categories objectForKey:catId] parentId] integerValue] == [curCategoryId integerValue]){
+            if([curCategories count] > 0 && [[[curCategories objectAtIndex:[curCategories count]-1] itemId] integerValue] < [[[categories objectForKey:catId] itemId] integerValue]){
+                [curCategories insertObject:[categories objectForKey:catId] atIndex:0];
+            } else {
+                [curCategories insertObject:[categories objectForKey:catId] atIndex:[curCategories count] ];
+            }
+            
+        }
+    }
+    
+    [self.tableView reloadData];
+}
+
+
+
 
 @end
