@@ -41,7 +41,8 @@
     NSArray *rightButtons = [[NSArray alloc] initWithObjects:addButton, editButton, nil];
     self.navigationItem.rightBarButtonItems = rightButtons;
     
-    self.navigationItem.leftBarButtonItem = backButton;
+    self.navigationItem.leftBarButtonItem = backButton;    
+    self.navigationItem.leftBarButtonItem.enabled = false;
     
 }
 
@@ -64,8 +65,8 @@
     }
     
     UIAlertView * alert = [[UIAlertView alloc]
-                           initWithTitle:@"Добавить"
-                           message:@"Введите название категории."
+                           initWithTitle:@"Add"
+                           message:@"Enter a category name, please."
                            delegate:self
                            cancelButtonTitle:@"OK"                           
                            otherButtonTitles:nil];
@@ -180,7 +181,15 @@
             }
             
         }
-    }    
+    }
+    if([curCategoryId integerValue] == 0){
+        self.navigationItem.title = @"Categories";
+        self.navigationItem.leftBarButtonItem.enabled = false;
+    } else { 
+        self.navigationItem.title = [[categories objectForKey:curCategoryId] name];
+        self.navigationItem.leftBarButtonItem.enabled = true;
+    }
+    
         
     [self.tableView reloadData];
 }
