@@ -7,14 +7,10 @@
 //
 
 #import "MasterViewController.h"
-#import "CategoryModel.h"
 
 @interface MasterViewController () {
     //NSMutableDictionary *categories;
-    NSMutableArray *curCategories;
-    int newCategoryId;
-    NSNumber *curCategoryId;
-    NSManagedObject *curCategory;
+    
 }
 @end
 
@@ -46,7 +42,7 @@
     self.navigationItem.leftBarButtonItem.enabled = false;
     
     
-    curCategoryId = @0;
+    self.curCategoryId = @0;
     
     
 }
@@ -74,11 +70,6 @@
 
 - (void)insertNewObject:(id)sender
 {
-    if(!newCategoryId){
-        newCategoryId = 1;
-        curCategoryId = @0;
-    }
-    
     UIAlertView * alert = [[UIAlertView alloc]
                            initWithTitle:@"Add"
                            message:@"Enter a category name, please."
@@ -98,9 +89,9 @@
         // Create a new managed object
         NSManagedObject *newCategory = [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
         [newCategory setValue:name forKey:@"name"];
-        NSNumber *itemId = [[NSNumber alloc] initWithInt:[NSDate timeIntervalSinceReferenceDate]+newCategoryId ];
+        NSNumber *itemId = [[NSNumber alloc] initWithInt:[NSDate timeIntervalSinceReferenceDate]+self.newCategoryId ];
         [newCategory setValue:itemId forKey:@"id"];
-        [newCategory setValue:curCategoryId forKey:@"parentId"];
+        [newCategory setValue:self.curCategoryId forKey:@"parentId"];
         
         NSError *error = nil;
         // Save the object to persistent store
@@ -112,10 +103,10 @@
         
         /*CategoryModel *tempCategory = [[CategoryModel alloc] initWithName:name itemId:[NSNumber numberWithInt:newCategoryId] parent:curCategoryId ];
         [categories setObject:tempCategory forKey:[NSNumber numberWithInt:newCategoryId]];*/
-        [curCategories insertObject:newCategory atIndex:0];
+        [self.curCategories insertObject:newCategory atIndex:0];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        newCategoryId++;
+        self.newCategoryId++;
     }    
 }
 
@@ -128,13 +119,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return curCategories.count;
+    return self.curCategories.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    NSManagedObject *category = [curCategories objectAtIndex:indexPath.row];
+    NSManagedObject *category = [self.curCategories objectAtIndex:indexPath.row];
     NSString *text = [category valueForKey:@"name"];
     cell.textLabel.text = text;
     return cell;
@@ -149,14 +140,15 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSManagedObject *tempCat = [curCategories objectAtIndex:indexPath.row];        
+        NSManagedObject *tempCat = [self.curCategories objectAtIndex:indexPath.row];
         NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
         [managedObjectContext deleteObject:tempCat];
+        [self removeChildrenById:<#(NSNumber *)#>]
         NSError *error = nil;
         if (![managedObjectContext save:&error]) {
             NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
         }
-        [curCategories removeObjectAtIndex:indexPath.row];
+        [self.curCategories removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } 
 }
@@ -177,39 +169,39 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    curCategoryId = [[curCategories objectAtIndex:indexPath.row] valueForKey:@"id"];
+    self.curCategoryId = [[self.curCategories objectAtIndex:indexPath.row] valueForKey:@"id"];
     
     [self updateTableView];
 }
 
 
 - (void)goPrevCategory:(id)sender {
-    curCategoryId = [ curCategory valueForKey:@"parentId" ];
+    self.curCategoryId = [ self.curCategory valueForKey:@"parentId" ];
     [self updateTableView];
 }
 
 -(void) updateTableView {
     
-    [curCategories removeAllObjects];
+    [self.curCategories removeAllObjects];
     
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Category"];
-    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"parentId == %d", curCategoryId];
+    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"parentId == %d", [self.curCategoryId integerValue]];
     [fetchRequest setPredicate:predicateID];
-    curCategories = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    self.curCategories = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
     
     [self.tableView reloadData];
     
-    if([curCategoryId integerValue] == 0){
+    if([self.curCategoryId integerValue] == 0){
         self.navigationItem.title = @"Categories";
         self.navigationItem.leftBarButtonItem.enabled = false;
     } else {
-        NSPredicate *predicateForCurCatID = [NSPredicate predicateWithFormat:@"id == %d", curCategoryId];
+        NSPredicate *predicateForCurCatID = [NSPredicate predicateWithFormat:@"id == %d", [self.curCategoryId integerValue]];
         [fetchRequest setPredicate:predicateForCurCatID];
         NSArray *curCategoryTempArray = [managedObjectContext executeFetchRequest:fetchRequest error:nil];
-        curCategory = [curCategoryTempArray objectAtIndex:0];
-        curCategoryId = [curCategory valueForKey:@"id"];
-        self.navigationItem.title = [curCategory valueForKey:@"name"];        
+        self.curCategory = [curCategoryTempArray objectAtIndex:0];
+        self.curCategoryId = [self.curCategory valueForKey:@"id"];
+        self.navigationItem.title = [self.curCategory valueForKey:@"name"];        
         self.navigationItem.leftBarButtonItem.enabled = true;
     }
     

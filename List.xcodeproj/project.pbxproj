@@ -26,6 +26,7 @@
 		7E10539619E6900F008A234C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7E10539419E6900F008A234C /* InfoPlist.strings */; };
 		7E10539919E6900F008A234C /* ListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E10539819E6900F008A234C /* ListTests.m */; };
 		7E7E49FB19ED08F20024F104 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7E49FA19ED08F20024F104 /* CoreData.framework */; };
+		7E80054619ED7A9000A46535 /* Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E80054519ED7A9000A46535 /* Category.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,8 @@
 		7E10539719E6900F008A234C /* ListTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListTests.h; sourceTree = "<group>"; };
 		7E10539819E6900F008A234C /* ListTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListTests.m; sourceTree = "<group>"; };
 		7E7E49FA19ED08F20024F104 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		7E80054419ED7A9000A46535 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
+		7E80054519ED7A9000A46535 /* Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Category.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,8 @@
 			isa = PBXGroup;
 			children = (
 				7E0ACB1319ED0AE100F37E46 /* CLCategoryModel.xcdatamodeld */,
+				7E80054419ED7A9000A46535 /* Category.h */,
+				7E80054519ED7A9000A46535 /* Category.m */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -341,6 +346,7 @@
 				7E10537219E6900E008A234C /* AppDelegate.m in Sources */,
 				7E10538119E6900F008A234C /* MasterViewController.m in Sources */,
 				7E0ACB1519ED0AE100F37E46 /* CLCategoryModel.xcdatamodeld in Sources */,
+				7E80054619ED7A9000A46535 /* Category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

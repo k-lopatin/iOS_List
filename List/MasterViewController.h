@@ -10,4 +10,9 @@
 
 @interface MasterViewController : UITableViewController
 
+@property (nonatomic, strong) NSMutableArray *curCategories;
+@property (nonatomic) int newCategoryId;
+@property (nonatomic, strong) NSNumber *curCategoryId;
+@property (nonatomic, strong)  NSManagedObject *curCategory;
+
 @end
