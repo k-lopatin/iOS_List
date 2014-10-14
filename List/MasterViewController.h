@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSNumber *const ROOT_CATEGROY_ID;
+
 @interface MasterViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *curCategories;

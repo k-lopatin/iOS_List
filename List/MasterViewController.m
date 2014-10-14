@@ -8,11 +8,7 @@
 
 #import "MasterViewController.h"
 
-@interface MasterViewController () {
-    //NSMutableDictionary *categories;
-    
-}
-@end
+NSNumber *const ROOT_CATEGROY_ID = 0;
 
 @implementation MasterViewController
 
@@ -28,22 +24,32 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    //self.navigationItem.leftBarButtonItem = self.editButtonItem;
     
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+    /*
+     Right Navigation. Add and edit buttons;
+     */    
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc]
+                                  initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                  target:self
+                                  action:@selector(insertNewObject:)];    
     UIBarButtonItem *editButton = self.editButtonItem;
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goPrevCategory:)];
-    
-    NSArray *rightButtons = [[NSArray alloc] initWithObjects:addButton, editButton, nil];
+    NSArray *rightButtons = [[NSArray alloc]
+                             initWithObjects:addButton, editButton, nil];
     self.navigationItem.rightBarButtonItems = rightButtons;
     
+    /*
+     Left Navigation. Back button;
+     */    
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc]
+                                   initWithTitle:NSLocalizedString(@"Back Button", nil)
+                                   style:UIBarButtonItemStylePlain
+                                   target:self
+                                   action:@selector(goPrevCategory:)];    
     self.navigationItem.leftBarButtonItem = backButton;    
     self.navigationItem.leftBarButtonItem.enabled = false;
     
     
-    self.curCategoryId = @0;
-    
+    self.curCategoryId = ROOT_CATEGROY_ID;   
     
 }
 
@@ -51,37 +57,33 @@
 {
     [super viewDidAppear:animated];
     
-    // Fetch the devices from persistent data store
-    /*NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Category"];
-    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"parentId == %d", 0];
-    [fetchRequest setPredicate:predicateID];
-    curCategories = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    
-    [self.tableView reloadData];*/
     [self updateTableView];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)insertNewObject:(id)sender
 {
+    /*
+     Add category dialog window 
+     */
     UIAlertView * alert = [[UIAlertView alloc]
-                           initWithTitle:@"Add"
-                           message:@"Enter a category name, please."
+                           initWithTitle:NSLocalizedString(@"Add dialog title", nil)
+                           message:NSLocalizedString(@"Add dialog text", nil)
                            delegate:self
-                           cancelButtonTitle:@"OK"                           
+                           cancelButtonTitle:NSLocalizedString(@"OK", nil)                           
                            otherButtonTitles:nil];
     alert.alertViewStyle = UIAlertViewStylePlainTextInput;
     [alert show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSString *name = [[alertView textFieldAtIndex:0] text];
+    
+    NSString *name = [[alertView textFieldAtIndex:0] text]; //name from input
+    
     if( name.length > 1 ){
         
         NSManagedObjectContext *context = [self managedObjectContext];
@@ -89,6 +91,7 @@
         // Create a new managed object
         NSManagedObject *newCategory = [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
         [newCategory setValue:name forKey:@"name"];
+        //Create unique id for new element
         NSNumber *itemId = [[NSNumber alloc] initWithInt:[NSDate timeIntervalSinceReferenceDate]+self.newCategoryId ];
         [newCategory setValue:itemId forKey:@"id"];
         [newCategory setValue:self.curCategoryId forKey:@"parentId"];
@@ -99,13 +102,11 @@
             NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
         }
         
-       
-        
-        /*CategoryModel *tempCategory = [[CategoryModel alloc] initWithName:name itemId:[NSNumber numberWithInt:newCategoryId] parent:curCategoryId ];
-        [categories setObject:tempCategory forKey:[NSNumber numberWithInt:newCategoryId]];*/
         [self.curCategories insertObject:newCategory atIndex:0];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView insertRowsAtIndexPaths:@[indexPath]
+                              withRowAnimation:UITableViewRowAnimationAutomatic];
+        
         self.newCategoryId++;
     }    
 }
@@ -133,7 +134,6 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
     return YES;
 }
 
@@ -143,7 +143,8 @@
         NSManagedObject *tempCat = [self.curCategories objectAtIndex:indexPath.row];
         NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
         [managedObjectContext deleteObject:tempCat];
-        [self removeChildrenById:<#(NSNumber *)#>]
+        // remove children of this element
+        [self removeChildrenById:[tempCat valueForKey:@"id"]];
         NSError *error = nil;
         if (![managedObjectContext save:&error]) {
             NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
@@ -154,21 +155,24 @@
 }
 
 - (void) removeChildrenById:(NSNumber*)id_ {
-    /*[categories removeObjectForKey:id_];
-    NSMutableArray *arrToRemove = [NSMutableArray new];
-    for(NSNumber *i in categories){
-        if([[[categories objectForKey:i] parentId] integerValue] == [id_ integerValue]){
-            [arrToRemove insertObject:i atIndex:0];            
-        }
+    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Category"];
+    NSPredicate *predicateID = [NSPredicate predicateWithFormat:@"parentId == %d", [id_ integerValue]];
+    [fetchRequest setPredicate:predicateID];
+    NSMutableArray *CategoriesToRemove = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    
+    /*
+     Remove every child of the element
+     */
+    for(NSManagedObject *n in CategoriesToRemove){
+        [self removeChildrenById:[n valueForKey:@"id"]];
+        [managedObjectContext deleteObject:n];
     }
-    for(int i=0; i<[arrToRemove count]; i++){
-        [self removeChildrenById:[arrToRemove objectAtIndex:i] ];
-    }*/
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    // set current category to selected 
     self.curCategoryId = [[self.curCategories objectAtIndex:indexPath.row] valueForKey:@"id"];
     
     [self updateTableView];
@@ -176,6 +180,7 @@
 
 
 - (void)goPrevCategory:(id)sender {
+    //set current category to parent 
     self.curCategoryId = [ self.curCategory valueForKey:@"parentId" ];
     [self updateTableView];
 }
@@ -192,8 +197,8 @@
     
     [self.tableView reloadData];
     
-    if([self.curCategoryId integerValue] == 0){
-        self.navigationItem.title = @"Categories";
+    if([self.curCategoryId integerValue] == [ROOT_CATEGROY_ID integerValue]){
+        self.navigationItem.title = NSLocalizedString(@"Main Title", nil);
         self.navigationItem.leftBarButtonItem.enabled = false;
     } else {
         NSPredicate *predicateForCurCatID = [NSPredicate predicateWithFormat:@"id == %d", [self.curCategoryId integerValue]];
@@ -205,19 +210,6 @@
         self.navigationItem.leftBarButtonItem.enabled = true;
     }
     
-    /*for(NSNumber *catId in categories){
-        if([[[categories objectForKey:catId] parentId] integerValue] == [curCategoryId integerValue]){
-            if([curCategories count] > 0 && [[[curCategories objectAtIndex:[curCategories count]-1] itemId] integerValue] < [[[categories objectForKey:catId] itemId] integerValue]){
-                [curCategories insertObject:[categories objectForKey:catId] atIndex:0];
-            } else {
-                [curCategories insertObject:[categories objectForKey:catId] atIndex:[curCategories count] ];
-            }
-            
-        }
-    }
-    
-    */
-        
     [self.tableView reloadData];
 }
 

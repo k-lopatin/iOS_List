@@ -5,3 +5,11 @@
   Created by lk1195 on 10/14/14.
   Copyright (c) 2014 lk1195. All rights reserved.
 */
+
+"Back Button" = "Back";
+
+"Add dialog title" = "Add category";
+"Add dialog text" = "Enter a category name, please";
+"Add dialog OK" = "OK";
+
+"Main Title" = "Categories";
