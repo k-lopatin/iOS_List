@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 
-#import "MasterViewController.h"
+#import "LSMasterViewController.h"
 
 @implementation AppDelegate
 

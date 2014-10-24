@@ -8,12 +8,20 @@
 
 #import "LSRestController.h"
 
+typedef void (^ CallbackBlock)();
+
 @implementation LSRestController
 
-- (void *) fetchCategoryById: (NSString *) catId;
+- (void) fetchCategoryById: (NSString *) catId callback:(CallbackBlock) callbackBlock;
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
         [self fetchCategoryByIdInBackground:catId];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            callbackBlock();
+        });
+        
     });
 }
 
