@@ -10,7 +10,7 @@
 
 extern NSNumber *const ROOT_CATEGROY_ID;
 
-@interface MasterViewController : UITableViewController
+@interface LSMasterViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *curCategories;
 @property (nonatomic) int newCategoryId;

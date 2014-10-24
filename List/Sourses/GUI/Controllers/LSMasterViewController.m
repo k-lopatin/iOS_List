@@ -6,11 +6,9 @@
 //  Copyright (c) 2014 lk1195. All rights reserved.
 //
 
-#import "MasterViewController.h"
+#import "LSMasterViewController.h"
 
-NSNumber *const ROOT_CATEGROY_ID = 0;
-
-@implementation MasterViewController
+@implementation LSMasterViewController
 
 - (void)awakeFromNib
 {
@@ -49,7 +47,7 @@ NSNumber *const ROOT_CATEGROY_ID = 0;
     self.navigationItem.leftBarButtonItem.enabled = false;
     
     
-    self.curCategoryId = ROOT_CATEGROY_ID;   
+    self.curCategoryId = @0;
     
 }
 
@@ -87,13 +85,14 @@ NSNumber *const ROOT_CATEGROY_ID = 0;
     if( name.length > 1 ){
         
         NSManagedObjectContext *context = [self managedObjectContext];
-        
-        // Create a new managed object
         NSManagedObject *newCategory = [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:context];
+        
         [newCategory setValue:name forKey:@"name"];
+        
         //Create unique id for new element
         NSNumber *itemId = [[NSNumber alloc] initWithInt:[NSDate timeIntervalSinceReferenceDate]+self.newCategoryId ];
         [newCategory setValue:itemId forKey:@"id"];
+        
         [newCategory setValue:self.curCategoryId forKey:@"parentId"];
         
         NSError *error = nil;
@@ -197,7 +196,7 @@ NSNumber *const ROOT_CATEGROY_ID = 0;
     
     [self.tableView reloadData];
     
-    if([self.curCategoryId integerValue] == [ROOT_CATEGROY_ID integerValue]){
+    if([self.curCategoryId isEqual: @0]){
         self.navigationItem.title = NSLocalizedString(@"Main Title", nil);
         self.navigationItem.leftBarButtonItem.enabled = false;
     } else {

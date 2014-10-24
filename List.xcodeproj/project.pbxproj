@@ -19,7 +19,6 @@
 		7E10537819E6900F008A234C /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E10537719E6900F008A234C /* Default-568h@2x.png */; };
 		7E10537B19E6900F008A234C /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E10537919E6900F008A234C /* MainStoryboard_iPhone.storyboard */; };
 		7E10537E19E6900F008A234C /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E10537C19E6900F008A234C /* MainStoryboard_iPad.storyboard */; };
-		7E10538119E6900F008A234C /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E10538019E6900F008A234C /* MasterViewController.m */; };
 		7E10538C19E6900F008A234C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E10538B19E6900F008A234C /* SenTestingKit.framework */; };
 		7E10538D19E6900F008A234C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E10536119E6900E008A234C /* UIKit.framework */; };
 		7E10538E19E6900F008A234C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E10536319E6900E008A234C /* Foundation.framework */; };
@@ -28,6 +27,8 @@
 		7E7E49FB19ED08F20024F104 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E7E49FA19ED08F20024F104 /* CoreData.framework */; };
 		7E80054619ED7A9000A46535 /* Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E80054519ED7A9000A46535 /* Category.m */; };
 		7E80054819ED845B00A46535 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7E80054719ED845B00A46535 /* Localizable.strings */; };
+		7E810D9619ED9DE30000C3A1 /* LSMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E810D9519ED9DE30000C3A1 /* LSMasterViewController.m */; };
+		7E82EB0919FA4D4B007EE672 /* LSRestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E82EB0819FA4D4B007EE672 /* LSRestController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,8 +58,6 @@
 		7E10537719E6900F008A234C /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		7E10537A19E6900F008A234C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		7E10537D19E6900F008A234C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		7E10537F19E6900F008A234C /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MasterViewController.h; path = ../../../MasterViewController.h; sourceTree = "<group>"; };
-		7E10538019E6900F008A234C /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = ../../../MasterViewController.m; sourceTree = "<group>"; };
 		7E10538A19E6900F008A234C /* ListTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ListTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E10538B19E6900F008A234C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		7E10539319E6900F008A234C /* ListTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ListTests-Info.plist"; sourceTree = "<group>"; };
@@ -69,6 +68,10 @@
 		7E80054419ED7A9000A46535 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
 		7E80054519ED7A9000A46535 /* Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Category.m; sourceTree = "<group>"; };
 		7E80054719ED845B00A46535 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		7E810D9419ED9DE30000C3A1 /* LSMasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSMasterViewController.h; sourceTree = "<group>"; };
+		7E810D9519ED9DE30000C3A1 /* LSMasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSMasterViewController.m; sourceTree = "<group>"; };
+		7E82EB0719FA4D4B007EE672 /* LSRestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSRestController.h; sourceTree = "<group>"; };
+		7E82EB0819FA4D4B007EE672 /* LSRestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSRestController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +119,7 @@
 		7E0ACB1019ED09FE00F37E46 /* CORE */ = {
 			isa = PBXGroup;
 			children = (
+				7E82EB0619FA4CBD007EE672 /* REST */,
 				7E0ACB1219ED0A4E00F37E46 /* CoreData */,
 			);
 			path = CORE;
@@ -219,8 +223,8 @@
 		7E80053F19ED30CF00A46535 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				7E10537F19E6900F008A234C /* MasterViewController.h */,
-				7E10538019E6900F008A234C /* MasterViewController.m */,
+				7E810D9419ED9DE30000C3A1 /* LSMasterViewController.h */,
+				7E810D9519ED9DE30000C3A1 /* LSMasterViewController.m */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -232,6 +236,15 @@
 				7E10537919E6900F008A234C /* MainStoryboard_iPhone.storyboard */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		7E82EB0619FA4CBD007EE672 /* REST */ = {
+			isa = PBXGroup;
+			children = (
+				7E82EB0719FA4D4B007EE672 /* LSRestController.h */,
+				7E82EB0819FA4D4B007EE672 /* LSRestController.m */,
+			);
+			path = REST;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -348,9 +361,10 @@
 			files = (
 				7E10536E19E6900E008A234C /* main.m in Sources */,
 				7E10537219E6900E008A234C /* AppDelegate.m in Sources */,
-				7E10538119E6900F008A234C /* MasterViewController.m in Sources */,
 				7E0ACB1519ED0AE100F37E46 /* CLCategoryModel.xcdatamodeld in Sources */,
 				7E80054619ED7A9000A46535 /* Category.m in Sources */,
+				7E810D9619ED9DE30000C3A1 /* LSMasterViewController.m in Sources */,
+				7E82EB0919FA4D4B007EE672 /* LSRestController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
